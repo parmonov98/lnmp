@@ -1,6 +1,8 @@
-HARDEN THE SERVER
-THE ROOT USER
-We need to change the root password that your VPS host emailed to you.
+# LNMP - setup guide
+***L - Linux, N - Nginx, M - MySql/MariabDB, P - PHP/PY/Perl***
+
+
+This is based on "The Perfect Nginx Server" course by Andrew Eaton.
 
  `passwd`
 
