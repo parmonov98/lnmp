@@ -525,10 +525,9 @@ image/svg+xml application/xhtml+xml application/atom+xml;
 SETTINGS LOCATED OUTSIDE NGINX.CONF – CREATE INCLUDE FILE
 Now we are going to create new files for the buffer, timeout and cache directives.
 BUFFERS
-Filename: buffers.conf
-#####
-## NGINX.CONF BUFFER DIRECTIVES
-#####
+Filename: 
+
+`buffers.conf`
 ```
 client_body_buffer_size 10k;
 client_header_buffer_size 1k;
@@ -541,10 +540,9 @@ use these values if you experience browser 400 errors
 `large_client_header_buffers 4 32k;`
 
 TIMEOUTS
-Filename: timeouts.conf
-#####
-## NGINX.CONF TIMEOUT DIRECTIVES
-#####
+Filename: 
+
+`timeouts.conf`
 ```
 client_header_timeout 3m;
 client_body_timeout 3m;
@@ -553,10 +551,10 @@ keepalive_requests 1000;
 send_timeout 3m;
 ```
 FILE HANDLE CACHE:
-Filename: file_handle_cache.conf
-#####
-## NGINX.CONF FILE HANDLE CACHE DIRECTIVES
-#####
+Filename: 
+
+`file_handle_cache.conf`
+
 ```
 open_file_cache max=1500 inactive=30s;
 open_file_cache_valid 30s;
