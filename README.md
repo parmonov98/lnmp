@@ -1,8 +1,10 @@
 # LNMP - setup guide
 ***L - Linux, N - Nginx, M - MySql/MariabDB, P - PHP/PY/Perl***
 
-
 This is based on "The Perfect Nginx Server" course by Andrew Eaton.
+
+
+# HARDEN THE SERVER
 
  `passwd`
 
@@ -207,7 +209,7 @@ For this reason, test WordPress 5.6 and php8.0 on a test server first, not your
 production server.
 Your production server is not used to test new software releases!!!
 
-**1 INSTALL NGINX MARIADB & PHP**
+# INSTALL NGINX MARIADB & PHP
 
 There are a few commands we need to cover regarding the Advanced Package Manager, `apt`:
 APT COMMANDS:
@@ -315,7 +317,7 @@ MODIFIED FOR PHP 8.0 - change php7.4 to php8.0
     include /etc/nginx/include_files/fastcgi_optimize.conf;
   }
  ```
-**5 HARDEN NGINX MARIADB & PHP**
+**HARDEN NGINX MARIADB & PHP**
 
 NGINX
 The nginx defaults are actually very secure and further hardening of the server is a combination of securing and
@@ -344,7 +346,7 @@ installation process. This is accomplished by running the security script, `mysq
 
 `sudo mysql_secure_installation`
 
-**6 PHP 7.4 and PHP 8.0**
+**PHP 7.4 and PHP 8.0**
 
 The main php configuration file is `php.ini` and is located in the following directory: `/etc/php/7.4/fpm/`
 
@@ -366,7 +368,8 @@ have made to the php-fpm configuration:
 `sudo systemctl restart php8.0-fpm`
 
 As `php.ini` is a large file, use Nano's Search Function `[ CTRL + W ]` to locate the directive you want to change.
-**7 OPTIMIZE NGINX MARIADB PHP7.4 and PHP8.0**
+
+**OPTIMIZE NGINX MARIADB PHP7.4 and PHP8.0**
 
 NGINX
 Optimizing nginx is an involved process. Initially we need to optimize the directives in the main, events, and http
@@ -392,7 +395,7 @@ UPDATED URL: Download the following Sys Schema from github.com to your home dire
 cd
 `wget https://github.com/FromDual/mariadb-sys/archive/master.zip`
 
-**8 Install zip and unzip**
+**Install zip and unzip**
 ```
 sudo apt update
 sudo apt install zip unzip
@@ -415,7 +418,8 @@ Give MySQLTuner executable permissions:
 
 `chmod +x mysqltuner.pl`
 
-**9 PHP**
+**PHP SETUP**
+
 We are going to be editing the main php configuration file, php.ini.
 ```
 upload_max_filesize = 100M
@@ -426,7 +430,7 @@ max_input_vars = 3000
 memory_limit = 256M
 ```
 
-OPCACHE
+**OPCACHE**
 
 ```opcache.memory_consumption=192
 opcache.interned_strings_buffer=16
@@ -447,3 +451,123 @@ find . -type f -print | grep php | wc -l
 ```
 CLOSEST PRIME NUMBER
 https://www.dcode.fr/closest-prime-number
+
+
+
+
+
+
+
+
+
+# NGINX.CONF
+Please make a backup copy of the configuration file before editing.
+Please refer to the video lectures to set the following directives
+Worker Processes
+Worker Connections
+If you site has lots of traffic, the worker connections may not be enough and you may find that you
+eventually end up with the error, "Too Many Open Files" Adding worker rlimit nofile to the main
+context and increasing the worker connections will help prevent this. Please don’t go overboard with
+these settings as worker connections of 2048 will be more than adequate.
+KEEP ALIVE
+SERVER TOKENS
+SERVER NAMES HASH BUCKET SIZE
+LOG FILES
+You have two log files, an access log and an error log. You can disbale the access log and enable it for
+individual sites
+
+`access_log off;`
+
+GZIP SETTINGS – please refer to the video lectures for the gzip directive values
+Compress data even for clients that are connecting to us via proxies.
+gzip_proxied
+Tell proxies to cache both the gzipped and regular version of a resource
+
+`gzip_vary`
+
+Compression level: 5 is a perfect compromise between size and cpu usage, offering about 75% reduction
+for most ascii files (almost identical to level 9).
+
+`gzip_comp_level`
+
+Don't compress anything that's already small and unlikely to shrink much if at all (the default is 20 bytes,
+which is bad as that usually leads to larger files after gzipping).
+
+`gzip_min_length`
+
+Sets the number and size of buffers used to compress a response
+
+`gzip_buffers`
+
+Enable compression both for HTTP/1.0 and HTTP/1.1.
+Compress all output labeled with one of the following MIME-types.
+gzip_types: typed on a single line ending with a semi colon
+text/plain text/css application/json application/javascript
+text/xml application/xml application/xml+rss text/javascript
+image/svg+xml application/xhtml+xml application/atom+xml;
+All GZIP Directives:
+#####
+## GZIP
+#####
+```
+gzip on;
+gzip_disable "msie6";
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 5;
+gzip_min_length 256;
+gzip_buffers 16 8k;
+gzip_http_version 1.1;
+gzip_types text/plain text/css application/json application/javascript
+text/xml application/xml application/xml+rss text/javascript
+image/svg+xml application/xhtml+xml application/atom+xml;
+```
+SETTINGS LOCATED OUTSIDE NGINX.CONF – CREATE INCLUDE FILE
+Now we are going to create new files for the buffer, timeout and cache directives.
+BUFFERS
+Filename: buffers.conf
+#####
+## NGINX.CONF BUFFER DIRECTIVES
+#####
+```
+client_body_buffer_size 10k;
+client_header_buffer_size 1k;
+client_max_body_size 8m;
+large_client_header_buffers 2 1k;
+```
+woocommerce - use larger values for large_client_header_buffers
+use these values if you experience browser 400 errors
+
+`large_client_header_buffers 4 32k;`
+
+TIMEOUTS
+Filename: timeouts.conf
+#####
+## NGINX.CONF TIMEOUT DIRECTIVES
+#####
+```
+client_header_timeout 3m;
+client_body_timeout 3m;
+keepalive_timeout 100;
+keepalive_requests 1000;
+send_timeout 3m;
+```
+FILE HANDLE CACHE:
+Filename: file_handle_cache.conf
+#####
+## NGINX.CONF FILE HANDLE CACHE DIRECTIVES
+#####
+```
+open_file_cache max=1500 inactive=30s;
+open_file_cache_valid 30s;
+open_file_cache_min_uses 5;
+open_file_cache_errors off;
+```
+Back to the nginx.conf file, in the http context, we need to include the files we have just created.
+Please refer to the video lectures on adding the include files to nginx.conf
+Check the syntax and then reload nginx to enable the directives. If the syntax check produces any errors,
+recheck the configuration files and make necessary corrections.
+```
+sudo nginx –t
+sudo systemctl reload nginx
+```
