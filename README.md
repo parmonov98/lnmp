@@ -569,3 +569,41 @@ recheck the configuration files and make necessary corrections.
 sudo nginx –t
 sudo systemctl reload nginx
 ```
+
+
+
+
+
+
+MARIADB
+TO LOGIN:
+
+`sudo mysql -u root`
+
+Commands to create database - PLEASE REFER TO NOTE LISTED HEREUNDER
+IMPORTANT NOTE:
+When using the grant all privileges command, the database user will be created and the
+password will be given to that user.
+COMMANDS TO CREATE DATABASE:
+
+```
+create database db_name;
+grant all privileges on db_name.* to 'db_user'@'localhost' identified by 'password';
+flush privileges;
+```
+
+TO VIEW PRIVILEGES FOR A PARTICULAR USER:
+
+`show grants for 'db_user'@'localhost';`
+
+TO DELETE A DATABASE:
+
+`drop database db_name;`
+
+TO DELETE A DATABASE USER
+
+`drop user db_username;`
+
+TO EXIT MARIADB
+
+`exit`
