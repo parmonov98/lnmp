@@ -575,7 +575,7 @@ sudo systemctl reload nginx
 
 
 
-MARIADB
+# MARIADB
 TO LOGIN:
 
 `sudo mysql -u root`
