@@ -607,3 +607,13 @@ TO DELETE A DATABASE USER
 TO EXIT MARIADB
 
 `exit`
+
+
+
+
+**NOTE**
+The command is for bind mounting a projects folder in www to user folder in $HOME/user/ftp/files
+and them stay persistent after rebooting the whole system.
+```BASH
+sudo mount --bind /var/www/domain.uz /home/domain_uz/ftp/files
+sudo echo "/var/www/domain.uz/   /home/domain_uz/ftp/files   none   bind   0 0" >> /etc/fstab
