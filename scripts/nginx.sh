@@ -47,3 +47,4 @@ sudo sed -i 's|DOMAIN_DIRECTORY_ARG|'"$DOMAIN_DIRECTORY"'|g' /etc/nginx/sites-av
 sudo ln -s /etc/nginx/sites-available/$DOMAIN.conf /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo service nginx reload
+echo "/var/www/$DOMAIN/   /home/$USERNAME/ftp/files   none   bind   0 0" |  sudo tee -a /etc/fstab
